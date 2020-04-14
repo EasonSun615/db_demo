@@ -3,12 +3,14 @@
 #include "InputBuffer.h"
 #include "Statement.h"
 #include "MetaCommand.h"
+#include "Table.h"
 
-void print_prompt(){ printf("mydb >"); }
+inline void print_prompt(){ printf("mydb >"); }
 
 
 int main(int argc, char *argv[]) {
     InputBuffer *input_buffer = new InputBuffer;
+    Table *table = new Table;
     while(true){
         print_prompt();
         input_buffer->read_input();
@@ -30,14 +32,22 @@ int main(int argc, char *argv[]) {
         switch(statement.prepare(input_buffer)){
             case PREPARE_SUCESS:
                 break;
+            case PREPARE_SYNTAX_ERROR:
+                printf("Syntax error. Could not parse statement.\n");
+                continue;
             case PREPARE_UNRECOGNIZED_STATEMENT:
                 printf("Unrecognized keyword at start of '%s'.\n",input_buffer->buffer);
                 continue;
         }
-        statement.execute();
-        printf("Executed.\n");
+        switch(statement.execute(table)){
+            case EXECUTE_SUCCESS:
+                printf("Executed.\n");
+                break;
+            case EXECUTE_TABLE_FULL:
+                printf("Error: Table full.\n");
+                break;
+        }
     }
-
 }
 
 
