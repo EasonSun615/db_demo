@@ -16,7 +16,7 @@
 
 class Table {
 public:
-    uint32_t num_rows;
+//    uint32_t num_rows;
 //    void * pages[TABLE_MAX_PAGES];
     Pager *pager;
 
@@ -27,10 +27,10 @@ public:
     // 返回第row_num个row在内存中的地址
     void *row_slot(uint32_t row_num);
 
-    void set_num_rows(uint32_t num){
-        pager->num_rows = num;
-        num_rows = num;
-    }
+//    void set_num_rows(uint32_t num){
+//        pager->num_rows = num;
+//        num_rows = num;
+//    }
 
 };
 

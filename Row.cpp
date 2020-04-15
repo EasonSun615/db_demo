@@ -9,8 +9,8 @@
 
 void Row::serialize(char *destination) {
     memcpy(destination + ID_OFFSET, &id, ID_SIZE);
-    memcpy(destination+USERNAME_OFFSET, username, USERNAME_SIZE);
-    memcpy(destination+EMAIL_OFFSET, email, EMAIL_SIZE);
+    strncpy(destination+USERNAME_OFFSET, username, USERNAME_SIZE);
+    strncpy(destination+EMAIL_OFFSET, email, EMAIL_SIZE);
 }
 
 

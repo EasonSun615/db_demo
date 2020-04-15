@@ -13,7 +13,6 @@
 // db_open
 Table::Table(const char *file_name) {
     pager = new Pager(file_name);
-    num_rows = pager->file_length / ROW_SIZE;
 }
 
 Table::~Table() {
