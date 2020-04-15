@@ -17,6 +17,10 @@ PrepareResult Statement::prepare_insert(InputBuffer *inputBuffer) {
     char *id_string = strtok(NULL, " ");
     char *username = strtok(NULL, " ");
     char *email = strtok(NULL, " ");
+//    printf("%s\n", keyword);
+//    printf("%s\n", id_string);
+//    printf("%s\n", username);
+//    printf("%s\n", email);
     if(id_string==NULL || username == NULL || email == NULL){
         return PREPARE_SYNTAX_ERROR;
     }
@@ -63,7 +67,7 @@ ExecuteResult Statement::execute_insert(Table *table) {
         return EXECUTE_TABLE_FULL;
     char * destination = (char *)table->row_slot(table->num_rows);   // 获取新增的row在table中的位置
     row_to_insert.serialize(destination);      // 将insert的row序列化到table中
-    table->num_rows++;
+    table->set_num_rows(table->num_rows+1);
     return EXECUTE_SUCCESS;
 }
 

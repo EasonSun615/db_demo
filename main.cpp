@@ -9,8 +9,13 @@ inline void print_prompt(){ printf("mydb >"); }
 
 
 int main(int argc, char *argv[]) {
+    if(argc<2){
+        printf("Must supply a database filename.\n");
+        exit(EXIT_FAILURE);
+    }
+    char *filename = argv[1];
     InputBuffer *input_buffer = new InputBuffer;
-    Table *table = new Table;
+    Table *table = new Table(filename);
     while(true){
         print_prompt();
         input_buffer->read_input();
@@ -18,7 +23,7 @@ int main(int argc, char *argv[]) {
         if(input_buffer->buffer[0] == '.'){
             // 处理 meta-commands
             MetaCommand metacommand;
-            switch(metacommand.execute(input_buffer)){
+            switch(metacommand.execute(input_buffer, table)){
                 case META_COMMAND_SUCCESS:
                     continue;
                 case META_COMMAND_UNRECOGNIZED_COMMAND:

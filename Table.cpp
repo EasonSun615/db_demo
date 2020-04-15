@@ -6,31 +6,31 @@
 #include <cstdlib>
 #include <cstdio>
 #include "Table.h"
+#include "Pager.h"
 #include "Row.h"
 
 
-Table::Table(){
-    num_rows = 0;
-    for(int i=0; i<TABLE_MAX_PAGES; i++)
-        pages[i] = NULL;
+// db_open
+Table::Table(const char *file_name) {
+    pager = new Pager(file_name);
+    num_rows = pager->file_length / ROW_SIZE;
 }
 
-Table::~Table(){
-    for(int i=0; i<TABLE_MAX_PAGES; i++)
-        // 释放page内存
-        free(pages[i]);
+Table::~Table() {
+    // flushes the page cache to disk
+    delete pager;
 }
 
 // 返回第row_num个row在table中的地址
 void *Table::row_slot(uint32_t row_num) {
     uint32_t page_num = row_num / ROWS_PER_PAGE;
-    void *page = pages[page_num];
-    if (page == NULL) {
-        // 申请page内存
-        pages[page_num] = malloc(PAGE_SIZE);
-        page = pages[page_num];
-    }
+    void *page = pager->get_page(page_num);
+//    if (page == NULL) {
+//        // 申请pager的pages内存
+//        pager->pages[page_num] = malloc(PAGE_SIZE);
+//        page = pager->pages[page_num];
+//    }
     uint32_t row_offset = row_num % ROWS_PER_PAGE;
     uint32_t byte_offset = row_offset * ROW_SIZE;
-    return (char *)page + byte_offset;
+    return (char *) page + byte_offset;
 }

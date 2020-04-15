@@ -6,6 +6,7 @@
 #define DB_DEMO_METACOMMAND_H
 
 class InputBuffer;
+class Table;
 
 typedef enum{
     META_COMMAND_SUCCESS,
@@ -14,7 +15,7 @@ typedef enum{
 
 class MetaCommand{
 public:
-    MetaCommandResult execute(InputBuffer *input_buffer);
+    MetaCommandResult execute(InputBuffer *input_buffer, Table *table);
 };
 
 
