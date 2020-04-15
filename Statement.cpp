@@ -4,20 +4,43 @@
 
 #include <cstring>
 #include <cstdio>
+#include <cstdlib>
 #include "Statement.h"
 #include "InputBuffer.h"
 #include "Table.h"
 #include "Row.h"
 
+
+PrepareResult Statement::prepare_insert(InputBuffer *inputBuffer) {
+    _type = STATEMENT_INSERT;
+    char *keyword = strtok(inputBuffer->buffer, " ");
+    char *id_string = strtok(NULL, " ");
+    char *username = strtok(NULL, " ");
+    char *email = strtok(NULL, " ");
+    if(id_string==NULL || username == NULL || email == NULL){
+        return PREPARE_SYNTAX_ERROR;
+    }
+    int id = atoi(id_string);
+    if(id<0)
+        return PREPARE_NEGTIVE_ID;
+    if(strlen(username) > COLUMN_USERNAME_SIZE || strlen(email) > COLUMN_EMAIL_SIZE)
+        return PREPARE_STRING_TOO_LONG;
+    row_to_insert.id = id;
+    strcpy(row_to_insert.username, username);
+    strcpy(row_to_insert.email, email);
+    return PREPARE_SUCESS;
+}
+
 PrepareResult Statement::prepare(InputBuffer *inputBuffer) {
     if (strncmp(inputBuffer->buffer, "insert", 6) == 0) {
-        _type = STATEMENT_INSERT;
-        int args_assigned = sscanf(inputBuffer->buffer, "insert %d %s %s", &(row_to_insert.id), row_to_insert.username,
-                                   row_to_insert.email);
-        if (args_assigned < 3) {
-            return PREPARE_SYNTAX_ERROR;
-        }
-        return PREPARE_SUCESS;
+        return prepare_insert(inputBuffer);
+//        _type = STATEMENT_INSERT;
+//        int args_assigned = sscanf(inputBuffer->buffer, "insert %d %s %s", &(row_to_insert.id), row_to_insert.username,
+//                                   row_to_insert.email);
+//        if (args_assigned < 3) {
+//            return PREPARE_SYNTAX_ERROR;
+//        }
+//        return PREPARE_SUCESS;
     } else if (strcmp(inputBuffer->buffer, "select") == 0) {
         _type = STATEMENT_SELECT;
         return PREPARE_SUCESS;

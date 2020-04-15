@@ -18,7 +18,9 @@ typedef enum{
 typedef enum{
     PREPARE_SUCESS,
     PREPARE_UNRECOGNIZED_STATEMENT,
-    PREPARE_SYNTAX_ERROR
+    PREPARE_SYNTAX_ERROR,
+    PREPARE_NEGTIVE_ID,
+    PREPARE_STRING_TOO_LONG
 }PrepareResult;
 
 typedef enum{
@@ -37,6 +39,7 @@ public:
     ExecuteResult execute(Table * table);
     ExecuteResult execute_select(Table *table);
     ExecuteResult execute_insert(Table *table);
+    PrepareResult prepare_insert(InputBuffer * inputBuffer);
 };
 
 #endif //DB_DEMO_STATEMENT_H
