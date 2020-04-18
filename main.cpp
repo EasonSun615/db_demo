@@ -15,7 +15,8 @@ int main(int argc, char *argv[]) {
     }
     char *filename = argv[1];
     InputBuffer *input_buffer = new InputBuffer;
-    Table *table = new Table(filename);
+    Pager *pager = new Pager(filename);
+    Table *table = new Table(pager);
     while(true){
         print_prompt();
         input_buffer->read_input();

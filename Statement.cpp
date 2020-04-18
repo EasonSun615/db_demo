@@ -8,7 +8,9 @@
 #include "Statement.h"
 #include "InputBuffer.h"
 #include "Table.h"
+#include "Cursor.h"
 #include "Row.h"
+#include "LeafNode.h"
 
 
 PrepareResult Statement::prepare_insert(InputBuffer *inputBuffer) {
@@ -54,8 +56,8 @@ PrepareResult Statement::prepare(InputBuffer *inputBuffer) {
 
 ExecuteResult Statement::execute_select(Table *table) {
     Row row;
-    for(int i=0; i<table->pager->num_rows; i++){
-        char *source = (char *)table->row_slot(i);
+    for(Cursor *cursor = table->begin(); cursor->cell_num!=table->end()->cell_num;  cursor->cell_num++){
+        void *source = cursor->get_value();
         row.deserialize(source);
         row.show();
     }
@@ -63,11 +65,12 @@ ExecuteResult Statement::execute_select(Table *table) {
 }
 
 ExecuteResult Statement::execute_insert(Table *table) {
-    if(table->pager->num_rows > TABLE_MAX_ROWS)
+    void *_node = table->pager->get_page(table->root_page_num);
+    LeafNode node(_node);
+    if(*(uint32_t *)node.get_num_cells() >= LEAF_NODE_MAX_CELLS)
         return EXECUTE_TABLE_FULL;
-    char * destination = (char *)table->row_slot(table->pager->num_rows);   // 获取新增的row在table中的位置
-    row_to_insert.serialize(destination);      // 将insert的row序列化到table中
-    table->pager->num_rows++;
+    Cursor *cursor = table->end();
+    node.insert(cursor, row_to_insert.id, &row_to_insert);
     return EXECUTE_SUCCESS;
 }
 
