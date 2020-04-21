@@ -25,7 +25,7 @@ void *LeafNode::get_value(uint32_t cell_num) {
 }
 
 void LeafNode::init() {
-    *(uint32_t *)get_num_cells() = 0;
+    *((uint32_t *)get_num_cells()) = 0;
     set_type(NODE_LEAF);
 }
 
@@ -39,11 +39,11 @@ void LeafNode::insert(Cursor *cursor, uint32_t key, Row *value) {
     }
     if(cursor->cell_num < num_cells){
         // Make room for new cell
-        for(int i=num_cells-1; i>=cursor->cell_num; i--){
+        for(int i=(int)num_cells-1; i>=(int)cursor->cell_num; i--){
             memcpy(get_cell(i+1), get_cell(i),LEAF_NODE_CELL_SIZE);
         }
     }
-    *(uint32_t *)get_num_cells() += 1;
+    *((uint32_t *)get_num_cells()) = num_cells + 1;
     *(uint32_t *)get_key(cursor->cell_num) = key;
     value->serialize(get_value(cursor->cell_num));
 }
