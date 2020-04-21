@@ -16,8 +16,8 @@ void *LeafNode::get_cell(uint32_t cell_num) {
     return (unsigned char *)node + LEAF_NODE_HEADER_SIZE + cell_num * LEAF_NODE_CELL_SIZE;
 }
 
-void *LeafNode::get_key(uint32_t cell_num) {
-    return get_cell(cell_num);
+uint32_t *LeafNode::get_key(uint32_t cell_num) {
+    return (uint32_t *)get_cell(cell_num);
 }
 
 void *LeafNode::get_value(uint32_t cell_num) {
@@ -26,6 +26,7 @@ void *LeafNode::get_value(uint32_t cell_num) {
 
 void LeafNode::init() {
     *(uint32_t *)get_num_cells() = 0;
+    set_type(NODE_LEAF);
 }
 
 void LeafNode::insert(Cursor *cursor, uint32_t key, Row *value) {

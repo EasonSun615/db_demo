@@ -33,9 +33,10 @@ const uint32_t LEAF_NODE_MAX_CELLS = LEAF_NODE_SPACE_FOR_CELLS / LEAF_NODE_CELL_
 class LeafNode : public Node {
 public:
     LeafNode(void *n):Node(n){}
+    LeafNode(Node &_node):Node(_node.node){}
     void *get_num_cells();
     void *get_cell(uint32_t cell_num);
-    void *get_key(uint32_t cell_num);
+    uint32_t *get_key(uint32_t cell_num);
     void *get_value(uint32_t cell_num);
     void init();
     void insert(Cursor *cursor, uint32_t key, Row *value);

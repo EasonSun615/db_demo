@@ -1,2 +1,2 @@
 db_demo : main.cpp InputBuffer.cpp InputBuffer.h MetaCommand.cpp MetaCommand.h Row.cpp Row.h Statement.cpp Statement.h Table.cpp Table.h Pager.cpp Pager.h Cursor.cpp Cursor.h LeafNode.cpp LeafNode.h
-	g++ -o db_demo main.cpp InputBuffer.cpp MetaCommand.cpp Row.cpp Statement.cpp Table.cpp Pager.cpp Cursor.cpp LeafNode.cpp
+	g++ -o db_demo main.cpp InputBuffer.cpp MetaCommand.cpp Row.cpp Statement.cpp Table.cpp Pager.cpp Cursor.cpp LeafNode.cpp Node.cpp

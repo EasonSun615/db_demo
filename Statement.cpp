@@ -53,13 +53,59 @@ ExecuteResult Statement::execute_select(Table *table) {
     return EXECUTE_SUCCESS;
 }
 
+Cursor *leaf_node_find(Table *table, uint32_t root_page_num, uint32_t key){
+    void *page = table->pager->get_page(root_page_num);
+    LeafNode ln(page);
+    uint32_t num_cells = *(uint32_t *)ln.get_num_cells();
+    Cursor *cursor = new Cursor(root_page_num, 0);
+    cursor->pager = table->pager;
+    // Binary search. 注意返回值的区间：[min_index, max_index]
+    uint32_t min_index = 0;
+    uint32_t max_index = num_cells;
+    while(max_index > min_index){
+        uint32_t index = min_index + (max_index- min_index)/2;
+        uint32_t key_at_index = *ln.get_key(index);
+        if(key_at_index == key){
+            cursor->cell_num = index;
+            return cursor;
+        }else if(key < key_at_index){
+            max_index = index;
+        }else if(key> key_at_index){
+            min_index = index+1;
+        }
+    }
+    cursor->cell_num = min_index;
+    return cursor;
+}
+
+Cursor *table_find(Table *table, uint32_t key){
+    uint32_t root_page_num = table->root_page_num;
+    void *page = table->pager->get_page(root_page_num);
+    Node node(page);
+    if(node.get_type() == NODE_LEAF){
+        return leaf_node_find(table, root_page_num, key);
+    }else{
+        printf("Need to implement searching an internal node\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
 ExecuteResult Statement::execute_insert(Table *table) {
     void *_node = table->pager->get_page(table->root_page_num);
     LeafNode node(_node);
-    if(*(uint32_t *)node.get_num_cells() >= LEAF_NODE_MAX_CELLS)
+    uint32_t num_cells = *(uint32_t *)node.get_num_cells();
+    if(num_cells >= LEAF_NODE_MAX_CELLS)
         return EXECUTE_TABLE_FULL;
-    Cursor *cursor = table->end();
-    node.insert(cursor, row_to_insert.id, &row_to_insert);
+    uint32_t key_to_insert = row_to_insert.id;
+    Cursor *cursor = table_find(table, key_to_insert);
+    if(cursor->cell_num < num_cells){
+        uint32_t key_at_index = *node.get_key(cursor->cell_num);
+        if(key_at_index == key_to_insert)
+            return EXECUTE_DUPLICATE_KEY;
+    }
+    node.insert(cursor, key_to_insert, &row_to_insert);
+//    Cursor *cursor = table->end();
+//    node.insert(cursor, row_to_insert.id, &row_to_insert);
     return EXECUTE_SUCCESS;
 }
 

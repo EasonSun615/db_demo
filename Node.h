@@ -22,9 +22,13 @@ const uint32_t PARENT_POINTER_OFFSET = IS_ROOT_OFFSET + IS_ROOT_SIZE;
 const uint32_t COMMON_NODE_HEADER_SIZE = NODE_TYPE_SIZE + IS_ROOT_SIZE + PARENT_POINTER_SIZE;
 
 class Node{
-protected:
+public:
     void *node;
+public:
     Node(void *n):node(n){}
+
+    void set_type(NodeType node_type);
+    NodeType get_type();
 };
 
 #endif //DB_DEMO_NODE_H
