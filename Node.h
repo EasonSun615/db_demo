@@ -21,6 +21,8 @@ const uint32_t PARENT_POINTER_SIZE = sizeof(uint32_t);
 const uint32_t PARENT_POINTER_OFFSET = IS_ROOT_OFFSET + IS_ROOT_SIZE;
 const uint32_t COMMON_NODE_HEADER_SIZE = NODE_TYPE_SIZE + IS_ROOT_SIZE + PARENT_POINTER_SIZE;
 
+class Table;
+
 class Node{
 public:
     void *node;
@@ -29,6 +31,10 @@ public:
 
     void set_type(NodeType node_type);
     NodeType get_type();
+    bool is_root();
+    void set_root(bool is_root);
+    uint32_t get_max_key();
+    void create_new_root(Table *table, uint32_t right_child_page_num);
 };
 
 #endif //DB_DEMO_NODE_H

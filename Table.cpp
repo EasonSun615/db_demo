@@ -17,8 +17,10 @@ Table::Table(Pager *_pager):pager(_pager){
         // database file is empty, Initialize page 0 as leaf node
         // 申请一块新的page
         void *root_page = pager->get_page(0);
-        // 设置 num_cells = 0
-        LeafNode(root_page).init();
+        // 设置 num_cells = 0, 默认is_root = false
+        LeafNode lf(root_page);
+        lf.init();
+        lf.set_root(true);
     }
 }
 
@@ -49,7 +51,7 @@ Cursor *Table::begin() {
 //    cursor->end_of_table = (pager->num_rows == 0);
     cursor->page_num = root_page_num;
     cursor->cell_num = 0;
-    cursor->pager = pager;
+    cursor->table = this;
     return cursor;
 }
 
@@ -59,7 +61,7 @@ Cursor *Table::end() {
 //    cursor->end_of_table = true;
     cursor->page_num = root_page_num;
     cursor->cell_num = *(uint32_t *)LeafNode(pager->get_page(cursor->page_num)).get_num_cells();
-    cursor->pager = pager;
+    cursor->table = this;
     return cursor;
 }
 

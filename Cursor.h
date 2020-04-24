@@ -7,14 +7,15 @@
 
 #include <cstdint>
 
-class Pager;
+class Table;
 
 class Cursor {
 public:
 
     uint32_t page_num;
     uint32_t cell_num;
-    Pager *pager;
+//    Pager *pager;
+    Table *table;
 
     Cursor() {}
 

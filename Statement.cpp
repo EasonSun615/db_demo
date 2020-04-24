@@ -58,7 +58,7 @@ Cursor *leaf_node_find(Table *table, uint32_t root_page_num, uint32_t key){
     LeafNode ln(page);
     uint32_t num_cells = *(uint32_t *)ln.get_num_cells();
     Cursor *cursor = new Cursor(root_page_num, 0);
-    cursor->pager = table->pager;
+    cursor->table = table;
     // Binary search. 注意返回值的区间：[min_index, max_index]
     uint32_t min_index = 0;
     uint32_t max_index = num_cells;
@@ -94,9 +94,10 @@ ExecuteResult Statement::execute_insert(Table *table) {
     void *_node = table->pager->get_page(table->root_page_num);
     LeafNode node(_node);
     uint32_t num_cells = *(uint32_t *)node.get_num_cells();
-    if(num_cells >= LEAF_NODE_MAX_CELLS)
-        return EXECUTE_TABLE_FULL;
+//    if(num_cells >= LEAF_NODE_MAX_CELLS)
+//        return EXECUTE_TABLE_FULL;
     uint32_t key_to_insert = row_to_insert.id;
+    // cursor记录新插入元素的位置
     Cursor *cursor = table_find(table, key_to_insert);
     if(cursor->cell_num < num_cells){
         uint32_t key_at_index = *node.get_key(cursor->cell_num);

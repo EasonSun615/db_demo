@@ -28,6 +28,7 @@ public:
     ~Pager();
     void *get_page(uint32_t page_num);
     void page_flush(int page_num);
+    uint32_t get_unused_page_num();
 };
 
 #endif //DB_DEMO_PAGER_H
