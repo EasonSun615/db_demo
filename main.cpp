@@ -4,6 +4,7 @@
 #include "Statement.h"
 #include "MetaCommand.h"
 #include "Table.h"
+#include "Pager.h"
 
 inline void print_prompt(){ printf("mydb >"); }
 

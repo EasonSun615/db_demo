@@ -30,6 +30,7 @@ void LeafNode::init() {
     *((uint32_t *)get_num_cells()) = 0;
     set_type(NODE_LEAF);
     set_root(false);
+    set_next_leaf(0);  // 0 represents no sibling
 }
 
 
@@ -71,6 +72,9 @@ void LeafNode::leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *val
     // update cell count of both leaf nodes
     *((uint32_t *)old_node.get_num_cells()) = LEAF_NODE_LEFT_SPLIT_COUNT;
     *((uint32_t *)new_node.get_num_cells()) = LEAf_NODE_RIGHT_SPLIT_COUNT;
+    new_node.set_next_leaf(old_node.get_next_leaf());
+    old_node.set_next_leaf(new_page_num);
+
     if(old_node.is_root()){
         return create_new_root(cursor->table, new_page_num);
     }else{
@@ -104,4 +108,42 @@ void LeafNode::insert(Cursor *cursor, uint32_t key, Row *value) {
 uint32_t LeafNode::get_max_key() {
     uint32_t num_cells = *(uint32_t *)get_num_cells();
     return *(uint32_t *)get_key(num_cells-1);
+}
+
+Cursor *LeafNode::leaf_node_find(Table *table, uint32_t page_num, uint32_t key) {
+    void *page = table->pager->get_page(page_num);
+    LeafNode ln(page);
+    uint32_t num_cells = *(uint32_t *) ln.get_num_cells();
+    Cursor *cursor = new Cursor(page_num, 0);
+    cursor->table = table;
+    // Binary search. 注意返回值的区间：[min_index, max_index]
+    uint32_t min_index = 0;
+    uint32_t max_index = num_cells;
+    while (max_index > min_index) {
+        uint32_t index = min_index + (max_index - min_index) / 2;
+        uint32_t key_at_index = *ln.get_key(index);
+        if (key_at_index == key) {
+            cursor->cell_num = index;
+            return cursor;
+        } else if (key < key_at_index) {
+            max_index = index;
+        } else if (key > key_at_index) {
+            min_index = index + 1;
+        }
+    }
+    cursor->cell_num = min_index;
+    cursor->page_num = page_num;
+    return cursor;
+}
+
+
+uint32_t LeafNode::get_next_leaf() {
+    void *next_leaf_ptr = (uint8_t *)node + LEAF_NODE_NEXT_LEAF_OFFSET;
+    uint32_t next_leaf = *(uint32_t *)next_leaf_ptr;
+    return next_leaf;
+}
+
+void LeafNode::set_next_leaf(uint32_t next_page_num) {
+    void *next_leaf_ptr = (uint8_t *)node + LEAF_NODE_NEXT_LEAF_OFFSET;
+    *(uint32_t *)next_leaf_ptr = next_page_num;
 }

@@ -13,7 +13,7 @@
 class Table {
 public:
     Pager *pager;
-    uint32_t root_page_num;
+    uint32_t _root_page_num;
 
     Table(Pager *p);
 
@@ -22,6 +22,8 @@ public:
     Cursor *begin();
 
     Cursor *end();
+
+    Cursor *find(uint32_t key);
 
 };
 

@@ -26,6 +26,8 @@ public:
 
     void advance();
 
+    bool equal(const Cursor *other);
+
 };
 
 #endif //DB_DEMO_CURSOR_H

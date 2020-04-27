@@ -16,6 +16,8 @@ const uint32_t INTERNAL_NODE_KEY_SIZE = sizeof(uint32_t);
 const uint32_t INTERNAL_NODE_CHILD_SIZE = sizeof(uint32_t);
 const uint32_t INTERNAL_NODE_CELL_SIZE = INTERNAL_NODE_KEY_SIZE + INTERNAL_NODE_CHILD_SIZE;
 
+class Cursor;
+
 class InternalNode:public Node{
 public:
     InternalNode(void *_node):Node(_node){}
@@ -27,6 +29,7 @@ public:
     uint32_t *get_key(uint32_t key_num);
     uint32_t get_max_key();
     void init();
+    static Cursor *internal_node_find(Table *table, uint32_t page_num, uint32_t key);
 };
 
 #endif //DB_DEMO_INTERNALNODE_H

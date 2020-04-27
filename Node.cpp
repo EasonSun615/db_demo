@@ -44,7 +44,7 @@ uint32_t Node::get_max_key() {
 
 void Node::create_new_root(Table *table, uint32_t right_child_page_num) {
     // *root里的内容是原来root分裂后的左半部分
-    void *root =table->pager->get_page(table->root_page_num);
+    void *root =table->pager->get_page(table->_root_page_num);
     uint32_t left_child_page_num = table->pager->get_unused_page_num();
     void *left_child = table->pager->get_page(left_child_page_num);
     memcpy(left_child, root, PAGE_SIZE);

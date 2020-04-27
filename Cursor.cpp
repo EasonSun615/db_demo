@@ -14,7 +14,15 @@ void *Cursor::get_value() {
 
 void Cursor::advance() {
     void *page = table->pager->get_page(page_num);
-    LeafNode ln(page);
+    LeafNode leaf_node(page);
+    uint32_t num_cells = *(uint32_t *)leaf_node.get_num_cells();
     cell_num += 1;
-    // todo: Advance to next leaf node
+    if(cell_num == num_cells && leaf_node.get_next_leaf()){
+        page_num = leaf_node.get_next_leaf();
+        cell_num = 0;
+    }
+}
+
+bool Cursor::equal(const Cursor *other) {
+    return table == other->table && page_num == other->page_num && cell_num == other->cell_num;
 }

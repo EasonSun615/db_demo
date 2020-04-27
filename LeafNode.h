@@ -17,7 +17,11 @@ class Cursor;
  */
 const uint32_t LEAF_NODE_NUM_CELLS_SIZE = sizeof(uint32_t);
 const uint32_t LEAF_NODE_NUM_CELLS_OFFSET = COMMON_NODE_HEADER_SIZE;
-const uint32_t LEAF_NODE_HEADER_SIZE = COMMON_NODE_HEADER_SIZE + LEAF_NODE_NUM_CELLS_SIZE;
+
+//Update the leaf node header format to include the new field
+const uint32_t LEAF_NODE_NEXT_LEAF_SIZE = sizeof(uint32_t);
+const uint32_t LEAF_NODE_NEXT_LEAF_OFFSET = LEAF_NODE_NUM_CELLS_OFFSET + LEAF_NODE_NUM_CELLS_SIZE;
+const uint32_t LEAF_NODE_HEADER_SIZE = COMMON_NODE_HEADER_SIZE + LEAF_NODE_NUM_CELLS_SIZE + LEAF_NODE_NEXT_LEAF_SIZE;
 
 /*
  * Lead node body layout
@@ -49,6 +53,9 @@ public:
     void insert(Cursor *cursor, uint32_t key, Row *value);
     void leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *value);
     uint32_t get_max_key();
+    static Cursor *leaf_node_find(Table *table, uint32_t page_num, uint32_t key);
+    uint32_t get_next_leaf();
+    void set_next_leaf(uint32_t next_page_num);
 };
 
 #endif //DB_DEMO_LEAFNODE_H
