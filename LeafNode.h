@@ -53,7 +53,8 @@ public:
     void insert(Cursor *cursor, uint32_t key, Row *value);
     void leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *value);
     uint32_t get_max_key();
-    static Cursor *leaf_node_find(Table *table, uint32_t page_num, uint32_t key);
+//    static Cursor *leaf_node_find(Table *table, uint32_t page_num, uint32_t key);
+    Cursor *find_key(Table *table,uint32_t page_num, uint32_t key);
     uint32_t get_next_leaf();
     void set_next_leaf(uint32_t next_page_num);
 };

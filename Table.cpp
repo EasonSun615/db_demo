@@ -52,14 +52,20 @@ Cursor *Table::end() {
 //}
 
 
-// 找到key要插入的位置
+/**
+ * @brief find the position that the key should insert
+ * @param key
+ * @return
+ */
 Cursor *Table::find(uint32_t key){
     uint32_t root_page_num = _root_page_num;
     void *page = pager->get_page(root_page_num);
     Node node(page);
     if (node.get_type() == NODE_LEAF) {
-        return LeafNode::leaf_node_find(this, root_page_num, key);
+        LeafNode leaf_node(page);
+        return leaf_node.find_key(this, root_page_num, key);
     } else {
-        return InternalNode::internal_node_find(this, root_page_num, key);
+        InternalNode internal_node(page);
+        return internal_node.find_key(this, key);
     }
 }

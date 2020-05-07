@@ -5,6 +5,7 @@
 #include "LeafNode.h"
 #include "Cursor.h"
 #include "Table.h"
+#include "InternalNode.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -31,8 +32,8 @@ void LeafNode::init() {
     set_type(NODE_LEAF);
     set_root(false);
     set_next_leaf(0);  // 0 represents no sibling
+    set_parent(0);
 }
-
 
 void LeafNode::leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *value){
     /*
@@ -42,10 +43,12 @@ void LeafNode::leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *val
      */
     void *old_page = cursor->table->pager->get_page(cursor->page_num);
     LeafNode old_node(old_page);
+    uint32_t old_max = old_node.get_max_key();
     uint32_t new_page_num = cursor->table->pager->get_unused_page_num();
     void *new_page = cursor->table->pager->get_page(new_page_num);
     LeafNode new_node(new_page);
     new_node.init();
+    new_node.set_parent(old_node.get_parent());
     /*
      * All existing keys plus new key should be divided evenly between old (left) and new (right) nodes.
      * Starting from the right, move each key to correct position.
@@ -78,8 +81,15 @@ void LeafNode::leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *val
     if(old_node.is_root()){
         return create_new_root(cursor->table, new_page_num);
     }else{
-        printf("Need to implement updating parent after split\n");
-        exit(EXIT_FAILURE);
+        uint32_t new_max = old_node.get_max_key();
+        uint32_t parent_page_num = old_node.get_parent();
+        /// 分裂的是否是最右的child_node?
+        bool right_most_child = false;
+        void *parent_page = cursor->table->pager->get_page(parent_page_num);
+        InternalNode parent_node(parent_page);
+        if(old_max > parent_node.get_max_key()) right_most_child = true;
+        parent_node.update_key(old_max, new_max);
+        parent_node.insert(new_page_num, cursor->table, right_most_child);
     }
 }
 
@@ -87,9 +97,6 @@ void LeafNode::insert(Cursor *cursor, uint32_t key, Row *value) {
     uint32_t num_cells = *(uint32_t *)get_num_cells();
     if(num_cells >= LEAF_NODE_MAX_CELLS) {
         // Node full
-        // Since We haven’t implemented splitting yet, so we error if the node is full.
-//        printf("Need to implement splitting a leaf node.\n");
-//        exit(EXIT_FAILURE);
         leaf_node_split_and_insert(cursor, key, value);
         return;
     }
@@ -110,10 +117,42 @@ uint32_t LeafNode::get_max_key() {
     return *(uint32_t *)get_key(num_cells-1);
 }
 
-Cursor *LeafNode::leaf_node_find(Table *table, uint32_t page_num, uint32_t key) {
-    void *page = table->pager->get_page(page_num);
-    LeafNode ln(page);
-    uint32_t num_cells = *(uint32_t *) ln.get_num_cells();
+//Cursor *LeafNode::leaf_node_find(Table *table, uint32_t page_num, uint32_t key) {
+//    void *page = table->pager->get_page(page_num);
+//    LeafNode ln(page);
+//    uint32_t num_cells = *(uint32_t *) ln.get_num_cells();
+//    Cursor *cursor = new Cursor(page_num, 0);
+//    cursor->table = table;
+//    // Binary search. 注意返回值的区间：[min_index, max_index]
+//    uint32_t min_index = 0;
+//    uint32_t max_index = num_cells;
+//    while (max_index > min_index) {
+//        uint32_t index = min_index + (max_index - min_index) / 2;
+//        uint32_t key_at_index = *ln.get_key(index);
+//        if (key_at_index == key) {
+//            cursor->cell_num = index;
+//            return cursor;
+//        } else if (key < key_at_index) {
+//            max_index = index;
+//        } else if (key > key_at_index) {
+//            min_index = index + 1;
+//        }
+//    }
+//    cursor->cell_num = min_index;
+//    cursor->page_num = page_num;
+//    return cursor;
+//}
+
+
+/**
+ * @brief Return the position where the key should be inserted
+ * @param table
+ * @param page_num
+ * @param key
+ * @return
+ */
+Cursor *LeafNode::find_key(Table *table, uint32_t page_num,uint32_t key) {
+    uint32_t num_cells = *(uint32_t *)get_num_cells();
     Cursor *cursor = new Cursor(page_num, 0);
     cursor->table = table;
     // Binary search. 注意返回值的区间：[min_index, max_index]
@@ -121,7 +160,7 @@ Cursor *LeafNode::leaf_node_find(Table *table, uint32_t page_num, uint32_t key) 
     uint32_t max_index = num_cells;
     while (max_index > min_index) {
         uint32_t index = min_index + (max_index - min_index) / 2;
-        uint32_t key_at_index = *ln.get_key(index);
+        uint32_t key_at_index = *get_key(index);
         if (key_at_index == key) {
             cursor->cell_num = index;
             return cursor;

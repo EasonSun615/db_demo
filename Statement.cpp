@@ -58,7 +58,6 @@ ExecuteResult Statement::execute_select(Table *table) {
 ExecuteResult Statement::execute_insert(Table *table) {
     uint32_t key_to_insert = row_to_insert.id;
     // cursor记录新插入元素的位置
-//    Cursor *cursor = table_find(table, key_to_insert);
     Cursor *cursor = table->find(key_to_insert);
     void *_node = table->pager->get_page(cursor->page_num);
     LeafNode leaf_node(_node);
