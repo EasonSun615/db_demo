@@ -9,6 +9,10 @@
 
 class Table;
 
+
+/**
+ * @brief 负责指向一个Row, 类似于STL中的iterator
+ */
 class Cursor {
 public:
 

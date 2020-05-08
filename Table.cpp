@@ -31,29 +31,26 @@ Table::~Table() {
 }
 
 
+/**
+ * @brief 获得执行第一个Row的Cursor
+ * @return
+ */
 Cursor *Table::begin() {
     Cursor *cursor = find(0);  //assume 0 is the minimum possible key
     return cursor;
 }
 
+/**
+ * @brief 获得指向最后一个Row的下一个位置的cursor
+ * @return
+ */
 Cursor *Table::end() {
     Cursor *cursor = find(INT32_MAX);   // assume INT32_MAX is the maximum possible key
     return cursor;
 }
 
-// 当cursor已经指向最后一个row的下个位置时，返回false
-//bool Table::cursor_advance(Cursor *cursor) {
-//    if(cursor->end_of_table)
-//        return false;
-//    cursor->row_num++;
-//    if(cursor->row_num == end()->row_num)
-//        cursor->end_of_table = true;
-//    return true;
-//}
-
-
 /**
- * @brief find the position that the key should insert
+ * @brief find the position where the Row with this key should insert
  * @param key
  * @return
  */

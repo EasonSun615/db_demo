@@ -30,6 +30,9 @@ typedef enum{
 }ExecuteResult;
 
 
+/**
+ * @brief 执行sql语句
+ */
 class Statement{
 public:
     StatementType _type;

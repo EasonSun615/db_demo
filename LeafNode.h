@@ -40,6 +40,9 @@ const uint32_t LEAf_NODE_RIGHT_SPLIT_COUNT =( LEAF_NODE_MAX_CELLS + 1)/ 2;
 const uint32_t LEAF_NODE_LEFT_SPLIT_COUNT = LEAF_NODE_MAX_CELLS + 1 - LEAf_NODE_RIGHT_SPLIT_COUNT;
 
 
+/**
+ * @brief 叶子结点
+ */
 class LeafNode : public Node {
 public:
     LeafNode(void *n= NULL):Node(n){}

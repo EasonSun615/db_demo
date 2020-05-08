@@ -14,6 +14,11 @@
 #include "InternalNode.h"
 
 
+/**
+ * @brief 对insert语句进行预处理，将buffer中的row反序列化到Row对象中
+ * @param inputBuffer
+ * @return
+ */
 PrepareResult Statement::prepare_insert(InputBuffer *inputBuffer) {
     _type = STATEMENT_INSERT;
     char *keyword = strtok(inputBuffer->buffer, " ");
@@ -34,6 +39,11 @@ PrepareResult Statement::prepare_insert(InputBuffer *inputBuffer) {
     return PREPARE_SUCESS;
 }
 
+/**
+ * @brief 对语句进行预处理
+ * @param inputBuffer
+ * @return
+ */
 PrepareResult Statement::prepare(InputBuffer *inputBuffer) {
     if (strncmp(inputBuffer->buffer, "insert", 6) == 0) {
         return prepare_insert(inputBuffer);
@@ -44,6 +54,12 @@ PrepareResult Statement::prepare(InputBuffer *inputBuffer) {
     return PREPARE_UNRECOGNIZED_STATEMENT;
 }
 
+
+/**
+ * @brief 执行select语句，遍历叶子结点，输出所有的row
+ * @param table
+ * @return
+ */
 ExecuteResult Statement::execute_select(Table *table) {
     Row row;
     for (Cursor *cursor = table->begin(); !cursor->equal(table->end()); cursor->advance()) {
@@ -55,6 +71,11 @@ ExecuteResult Statement::execute_select(Table *table) {
 }
 
 
+/**
+ * @brief 执行insert语句，插入一个row
+ * @param table
+ * @return
+ */
 ExecuteResult Statement::execute_insert(Table *table) {
     uint32_t key_to_insert = row_to_insert.id;
     // cursor记录新插入元素的位置
@@ -72,6 +93,7 @@ ExecuteResult Statement::execute_insert(Table *table) {
 //    node.insert(cursor, row_to_insert.id, &row_to_insert);
     return EXECUTE_SUCCESS;
 }
+
 
 ExecuteResult Statement::execute(Table *table) {
     switch (_type) {

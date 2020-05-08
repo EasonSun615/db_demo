@@ -7,6 +7,9 @@
 
 #include <cstddef>
 
+/**
+ * @brief 负责处理从标准输入读字符串到buffer里，字符串可能是Statement或者MetaCommand
+ */
 class InputBuffer{
 public:
      char * buffer;

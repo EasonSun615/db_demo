@@ -11,9 +11,8 @@
 #define COLUMN_EMAIL_SIZE 255
 
 
-/*
- * 1. 负责row(就是tuple)的序列化和反序列化
- * 2. 定义row序列化相关的一些常量
+/**
+ * @brief 负责row(就是tuple)的序列化和反序列化; 定义row序列化相关的一些常量
  */
 class Row {
 public:

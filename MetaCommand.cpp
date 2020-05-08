@@ -11,7 +11,7 @@
 #include "LeafNode.h"
 #include "InternalNode.h"
 
-void print_constants() {
+void MetaCommand::print_constants() {
     printf("ROW_SIZE: %d\n", ROW_SIZE);
     printf("COMMON_NODE_HEADER_SIZE: %d\n", COMMON_NODE_HEADER_SIZE);
     printf("LEAF_NODE_HEADER_SIZE: %d\n", LEAF_NODE_HEADER_SIZE);
@@ -20,16 +20,6 @@ void print_constants() {
     printf("LEAF_NODE_MAX_CELLS: %d\n", LEAF_NODE_MAX_CELLS);
 }
 
-//void print_leaf_node(void *node) {
-//    LeafNode lf(node);
-//    uint32_t num_cells = *(uint32_t *) lf.get_num_cells();
-//    printf("leaf (size %d)\n", num_cells);
-//    for (uint32_t i = 0; i < num_cells; i++) {
-//        uint32_t key = *(uint32_t *) lf.get_key(i);
-//        printf("  - %d : %d\n", i, key);
-//    }
-//}
-
 
 // helper function for indent(缩进）
 void indent(uint32_t level) {
@@ -37,7 +27,7 @@ void indent(uint32_t level) {
         printf("  ");
 }
 
-void print_tree(Table *table, uint32_t page_num, uint32_t indentation_level) {
+void MetaCommand::print_tree(Table *table, uint32_t page_num, uint32_t indentation_level) {
     void *page = table->pager->get_page(page_num);
     Node node(page);
     uint32_t num_keys, child;

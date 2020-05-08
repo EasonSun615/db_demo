@@ -13,9 +13,14 @@ typedef enum{
     META_COMMAND_UNRECOGNIZED_COMMAND,
 }MetaCommandResult;
 
+/**
+ * @brief 负责执行一些命令，包括：.btree, .constants, .exit
+ */
 class MetaCommand{
 public:
     MetaCommandResult execute(InputBuffer *input_buffer, Table *table);
+    void print_tree(Table *table, uint32_t page_num, uint32_t indentation_level);
+    void print_constants();
 };
 
 

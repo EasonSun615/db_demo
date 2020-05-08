@@ -22,6 +22,10 @@ const uint32_t INTERNAL_NODE_MAX_CELLS = (PAGE_SIZE - INTERNAL_NODE_HEADER_SIZE)
 
 class Cursor;
 
+
+/**
+ * @brief 中间结点
+ */
 class InternalNode:public Node{
 public:
     InternalNode(void *_node):Node(_node){}

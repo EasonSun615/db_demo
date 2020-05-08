@@ -24,6 +24,10 @@ const uint32_t COMMON_NODE_HEADER_SIZE = NODE_TYPE_SIZE + IS_ROOT_SIZE + PARENT_
 class Table;
 class Cursor;
 
+
+/**
+ * @brief Base class of B+tree node
+ */
 class Node{
 public:
     void *node;

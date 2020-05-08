@@ -10,6 +10,10 @@
 #include "Pager.h"
 #include "Cursor.h"
 
+
+/**
+ * @brief 表示一张表，存储着：1、表使用的pager, 2.根节点的page_num
+ */
 class Table {
 public:
     Pager *pager;
