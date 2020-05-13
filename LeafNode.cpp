@@ -6,8 +6,6 @@
 #include "Cursor.h"
 #include "Table.h"
 #include "InternalNode.h"
-#include <cstdio>
-#include <cstdlib>
 #include <cstring>
 
 
@@ -35,6 +33,12 @@ void LeafNode::init() {
     set_parent(0);
 }
 
+/**
+ * @brief 重要函数 分裂叶子结点
+ * @param cursor
+ * @param key
+ * @param value
+ */
 void LeafNode::leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *value){
     /*
      * Create a new node and move half the cells over.
@@ -79,6 +83,7 @@ void LeafNode::leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *val
     old_node.set_next_leaf(new_page_num);
 
     if(old_node.is_root()){
+        /// 第一次分裂
         return create_new_root(cursor->table, new_page_num);
     }else{
         uint32_t new_max = old_node.get_max_key();

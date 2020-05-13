@@ -5,6 +5,7 @@
 #ifndef DB_DEMO_METACOMMAND_H
 #define DB_DEMO_METACOMMAND_H
 
+#include <stdint.h>
 class InputBuffer;
 class Table;
 

@@ -21,6 +21,7 @@
  */
 PrepareResult Statement::prepare_insert(InputBuffer *inputBuffer) {
     _type = STATEMENT_INSERT;
+    /// keyword， id_string, username， email四个字符串都是在buffer里（直接将buffer中的空格改成了'\0')
     char *keyword = strtok(inputBuffer->buffer, " ");
     char *id_string = strtok(NULL, " ");
     char *username = strtok(NULL, " ");

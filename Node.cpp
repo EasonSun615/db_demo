@@ -56,23 +56,23 @@ Cursor *Node::find_key(Table *table, uint32_t page_num, uint32_t key){
 }
 
 void Node::create_new_root(Table *table, uint32_t right_child_page_num) {
-    // *root里的内容是原来root分裂后的左半部分
+    /// *root里的内容是原来root分裂后的左半部分
     void *root =table->pager->get_page(table->_root_page_num);
     uint32_t left_child_page_num = table->pager->get_unused_page_num();
     void *left_child = table->pager->get_page(left_child_page_num);
-    // set left child
+    /// set left child
     memcpy(left_child, root, PAGE_SIZE);
     Node left_child_node(left_child);
     left_child_node.set_root(false);
     left_child_node.set_parent(table->_root_page_num);
     uint32_t left_child_max_key = left_child_node.get_max_key();
-    // set right child
+    /// set right child
     void *right_child = table->pager->get_page(right_child_page_num);
     Node right_child_node(right_child);
     right_child_node.set_parent(table->_root_page_num);
 
-    // set root node
-    /* Root node is a new internal node with one key and two children */
+    /// set root node
+    /** Root node is a new internal node with one key and two children */
     InternalNode root_node(root);
     root_node.set_type(NODE_INTERNAL);
     root_node.set_root(true);

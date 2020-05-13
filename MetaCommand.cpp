@@ -64,6 +64,7 @@ void MetaCommand::print_tree(Table *table, uint32_t page_num, uint32_t indentati
 
 MetaCommandResult MetaCommand::execute(InputBuffer *input_buffer, Table *table) {
     if (strcmp(input_buffer->buffer, ".exit") == 0) {
+        /// 调用Table的析构函数，然后在Table的析构函数中调用Pager的析构函数， Pager的析构函数将所有的page写到文件中
         delete table;
         exit(EXIT_SUCCESS);
     } else if (strcmp(input_buffer->buffer, ".btree") == 0) {

@@ -25,6 +25,8 @@ Table::Table(Pager *_pager):pager(_pager){
     }
 }
 
+
+
 Table::~Table() {
     // flushes the page cache to disk
     delete pager;
@@ -50,7 +52,7 @@ Cursor *Table::end() {
 }
 
 /**
- * @brief find the position where the Row with this key should insert
+ * @brief (重要函数）find the position where the Row with this key should insert
  * @param key
  * @return
  */

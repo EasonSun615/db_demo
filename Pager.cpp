@@ -35,14 +35,17 @@ Pager::Pager(const char *file_name) {
         pages[i] = NULL;
 }
 
+/**
+ * @brief 将第page_num个page写入磁盘
+ * @param page_num
+ */
 void Pager::page_flush(int page_num) {
     if (pages[page_num] == NULL) {
         printf("Tried to flush null page\n");
         exit(EXIT_FAILURE);
     }
-    // 设置文件写指针
+    /// 设置文件写指针
     off_t offset = lseek(file_descriptor, page_num * PAGE_SIZE, SEEK_SET);
-
     if (offset == -1) {
         printf("Error seeking: %d\n", errno);
         exit(EXIT_FAILURE);
@@ -58,9 +61,9 @@ void Pager::page_flush(int page_num) {
 Pager::~Pager() {
     //flushes the page cache to disk
     for (int i = 0; i < num_pages; i++) {
-        // 将前num_full_pages个page写会磁盘
+        /// 将前num_pages个page写会磁盘
         if (pages[i] == NULL) {
-            // 已经写会磁盘
+            // 已经写入磁盘
             continue;
         }
         page_flush(i);
@@ -73,14 +76,6 @@ Pager::~Pager() {
         printf("Error closing db file.\n");
         exit(EXIT_FAILURE);
     }
-
-    // 貌似没啥用了
-    for (uint32_t i = 0; i < TABLE_MAX_PAGES; i++) {
-        if (pages[i]) {
-            free(pages[i]);
-            pages[i] = NULL;
-        }
-    }
 }
 
 // 根据page_num, 返回该页在内存中的地址
@@ -92,11 +87,7 @@ void *Pager::get_page(uint32_t page_num) {
     if (pages[page_num] == NULL) {
         // Cache miss, Allocate memory and load from file
         void *page = malloc(PAGE_SIZE);
-
-        // num_pages: 文件中总page数
         uint32_t file_num_pages = file_length / PAGE_SIZE;
-//        if (file_length % PAGE_SIZE)
-//            file_num_pages += 1;
 
         if (page_num <= file_num_pages) {
             // 说明要访问的page是已经在文件中的，所以将page从文件中复制到内存里

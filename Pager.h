@@ -9,8 +9,7 @@
 #include "Row.h"
 #define TABLE_MAX_PAGES 100
 const uint32_t PAGE_SIZE = 4096;
-//const uint32_t ROWS_PER_PAGE = PAGE_SIZE / ROW_SIZE;
-//const uint32_t TABLE_MAX_ROWS = ROWS_PER_PAGE * TABLE_MAX_PAGES;
+
 
 /**
  * @brief Pager的操作都是以page为单位 1.负责根据page_num获得page在内存中的地址，如果page不在内存中的话，从文件中read; 2.负责将page flush到磁盘上
